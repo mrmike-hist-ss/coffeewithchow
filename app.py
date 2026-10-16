@@ -102,12 +102,12 @@ if not st.session_state.ordered:
 
     # --- DRINK 1: LATTE / WHITE ---
     st.markdown('<div class="coffee-card">', unsafe_allow_html=True)
-    col1, col2, col3 = st.columns()
+    col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown('<div class="cup-container"><div class="cup latte"><div class="layer espresso">Espresso</div><div class="layer milk">Milk</div><div class="layer foam">Foam</div></div></div>', unsafe_allow_html=True)
     with col2:
         st.markdown("#### 1. Latte / White")
-        st.caption("Rich espresso base with velvety smooth steamed milk.")
+        st.caption("Rich espresso base with velvety smooth milk.")
         latte_temp = st.selectbox("Temperature", ["Iced", "Hot"], key="latte_temp")
     with col3:
         st.markdown(f"<p style='text-align:right; font-weight:bold;'>\${DRINK_PRICES['Latte / White'][latte_temp]:.2f}</p>", unsafe_allow_html=True)
@@ -118,12 +118,12 @@ if not st.session_state.ordered:
 
     # --- DRINK 2: MOCHA ---
     st.markdown('<div class="coffee-card">', unsafe_allow_html=True)
-    col1, col2, col3 = st.columns()
+    col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown('<div class="cup-container"><div class="cup mocha"><div class="layer chocolate">Choc</div><div class="layer espresso">Espresso</div><div class="layer milk">Milk</div><div class="layer foam">Foam</div></div></div>', unsafe_allow_html=True)
     with col2:
         st.markdown("#### 2. Mocha")
-        st.caption("Espresso blended with dark chocolate and creamy milk.")
+        st.caption("Espresso blended with rich chocolate and milk.")
         mocha_temp = st.selectbox("Temperature", ["Iced", "Hot"], key="mocha_temp")
     with col3:
         st.markdown(f"<p style='text-align:right; font-weight:bold;'>\${DRINK_PRICES['Mocha'][mocha_temp]:.2f}</p>", unsafe_allow_html=True)
@@ -134,7 +134,7 @@ if not st.session_state.ordered:
 
     # --- DRINK 3: LONG BLACK ---
     st.markdown('<div class="coffee-card">', unsafe_allow_html=True)
-    col1, col2, col3 = st.columns()
+    col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown('<div class="cup-container"><div class="cup longblack"><div class="layer water">Water</div><div class="layer espresso">Espresso</div></div></div>', unsafe_allow_html=True)
     with col2:
