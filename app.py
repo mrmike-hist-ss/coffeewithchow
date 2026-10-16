@@ -1,5 +1,7 @@
 import streamlit as st
 from datetime import datetime, timedelta
+import urllib.request
+import json
 
 # --- PAGE CONFIGURATION ---
 st.set_page_config(page_title="Room 102 Coffee", page_icon="☕", layout="centered")
@@ -11,6 +13,9 @@ if 'ordered' not in st.session_state:
 # --- CONFIGURATION & BASE PRICES ---
 PAYNOW_NUMBER = "9640 7262"
 MAX_QTY = 3
+
+# 🔗 Your verified Google Apps Script URL
+GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycby8F_Xs_EteiSLW9HHqJF7GkZs4VbS7XywVxsnx2PBoaunEXZ7OnYTzsn4lWoPzjo8s6Q/exec"
 
 DRINK_PRICES = {
     "Latte / White": {"Hot": 5.00, "Iced": 5.50},
@@ -152,27 +157,28 @@ if not st.session_state.ordered:
     st.markdown("---")
     st.subheader("🕒 Collection Preferences")
     
-    # Oat Milk Customization (Escaped dollar sign)
     oat_milk = st.checkbox("🌾 Add \$1 for oat milk (Applies to all milk drinks in cart)")
-    
-    # Time slot collection dropdown
     selected_slot = st.selectbox("Select 15-Minute Pickup Window", TIME_SLOTS)
 
-    # Customer Contact Info
     st.subheader("👤 Contact Details")
     name = st.text_input("Your Name", placeholder="e.g. Rachel")
     contact = st.text_input("WhatsApp Number or Telegram Handle", placeholder="e.g. 9123 4567 / @rachel")
 
-    # --- CALCULATE TOTAL & SUBMIT ---
-    if cart and name and contact and selected_slot:
+    # --- LIVE BREAKDOWN & VALIDATION ---
+    if cart:
+        st.markdown("---")
         st.markdown("### 🛒 Order Review")
         subtotal = 0
         oat_milk_total = 0
+        items_list = []
         
         for name_str, details in cart.items():
             item_cost = details["qty"] * details["unit_price"]
             subtotal += item_cost
-            st.write(f"- {details['qty']}x {name_str}: **\${item_cost:.2f}**")
+            
+            milk_tag = " (Oat Milk)" if oat_milk and ("Latte" in name_str or "Mocha" in name_str) else ""
+            items_list.append(f"{details['qty']}x {name_str}{milk_tag}")
+            st.write(f"- {details['qty']}x {name_str}: **\Total: \${item_cost:.2f}**")
             
             if oat_milk and ("Latte" in name_str or "Mocha" in name_str):
                 oat_milk_total += (details["qty"] * 1.00)
@@ -183,16 +189,41 @@ if not st.session_state.ordered:
         grand_total = subtotal + oat_milk_total
         st.markdown(f"### **Total Amount Due: \${grand_total:.2f}**")
         
-        if st.button("Confirm Order & View PayNow Details", type="primary"):
-            st.session_state.customer_name = name
-            st.session_state.customer_contact = contact
-            st.session_state.customer_slot = selected_slot
-            st.session_state.grand_total = grand_total
-            st.session_state.cart = cart
-            st.session_state.ordered = True
-            st.rerun()
+        # Check if text inputs are filled before enabling submit
+        if name and contact:
+            if st.button("Confirm Order & View PayNow Details", type="primary"):
+                # Construct data package for Google Sheets
+                payload = {
+                    "name": name,
+                    "contact": contact,
+                    "slot": selected_slot,
+                    "items": ", ".join(items_list),
+                    "total": f"${grand_total:.2f}"
+                }
+                
+                # Post data to your Google Apps Script link
+                try:
+                    req = urllib.request.Request(
+                        GOOGLE_SHEET_WEBAPP_URL,
+                        data=json.dumps(payload).encode('utf-8'),
+                        headers={'Content-Type': 'application/json'},
+                        method='POST'
+                    )
+                    urllib.request.urlopen(req)
+                except Exception as e:
+                    pass # Fails silently to protect user experience if network bottlenecks
+
+                st.session_state.customer_name = name
+                st.session_state.customer_contact = contact
+                st.session_state.customer_slot = selected_slot
+                st.session_state.grand_total = grand_total
+                st.session_state.cart = cart
+                st.session_state.ordered = True
+                st.rerun()
+        else:
+            st.info("💡 Please key in your Name and Contact Details above to open the checkout button.")
     else:
-        st.warning("Please add at least 1 drink to your cart and fill out your details to submit your pre-order.")
+        st.warning("Please select a quantity for at least 1 coffee to start your order.")
 
 else:
     # --- FEE-FREE PAYNOW SCREEN ---
@@ -209,17 +240,3 @@ else:
     st.info(f"📱 **Mobile Number:** `+65 {PAYNOW_NUMBER}`\n\n💰 **Exact Amount:** `${st.session_state.grand_total:.2f}`")
     
     st.markdown("""
-    3. **Send your payment screenshot** to the host immediately via your provided contact handles:
-    """)
-    st.code(f"{st.session_state.customer_contact}")
-    
-    st.markdown(f"""
-    ---
-    ### 🚨 Collection Details:
-    * **Scheduled Window:** Today between **{st.session_state.customer_slot}**
-    * **Address Privacy:** Once your payment transfer screenshot is verified over chat, the exact HDB floor and unit number will be revealed to you instantly.
-    """)
-    
-    if st.button("Back to Menu"):
-        st.session_state.ordered = False
-        st.rerun()
