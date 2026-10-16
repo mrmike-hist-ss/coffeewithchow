@@ -1,7 +1,6 @@
 import streamlit as st
 from datetime import datetime, timedelta
 import requests
-import json
 
 # --- PAGE CONFIGURATION ---
 st.set_page_config(page_title="Room 102 Coffee", page_icon="☕", layout="centered")
@@ -14,8 +13,8 @@ if 'ordered' not in st.session_state:
 PAYNOW_NUMBER = "9640 7262"
 MAX_QTY = 3
 
-# 🔗 Your verified Google Apps Script URL
-GOOGLE_SHEET_WEBAPP_URL = "https://google.com"
+# 🔗 Your new verified Google Apps Script URL
+GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzFMqeTolsZBu82SCSVVjZdwr0-xzSwejKu-1lDKx_4jNBhu8UtAXqmQOCfRDU-tcl8tQ/exec"
 
 DRINK_PRICES = {
     "Latte / White": {"Hot": 5.00, "Iced": 5.50},
@@ -192,8 +191,8 @@ if not st.session_state.ordered:
         # Check if text inputs are filled before enabling submit
         if name and contact:
             if st.button("Confirm Order & View PayNow Details", type="primary"):
-                # Construct data package for Google Sheets
-                payload = {
+                # URL form payload to sync cleanly with standard Google doPost variables
+                form_payload = {
                     "name": name,
                     "contact": contact,
                     "slot": selected_slot,
@@ -201,15 +200,9 @@ if not st.session_state.ordered:
                     "total": f"${grand_total:.2f}"
                 }
                 
-                # 🚀 FIXED FUNCTION: This method forces Python to strictly maintain POST payloads through Google's secure redirects
+                # Submit data as regular form-encoded query parameters
                 try:
-                    response = requests.post(GOOGLE_SHEET_WEBAPP_URL, data=json.dumps(payload))
-                    # Handle Google's 302 Redirection rules cleanly
-                    if response.history:
-                        for resp in response.history:
-                            if resp.status_code == 302:
-                                redirect_url = resp.headers.get('Location')
-                                requests.post(redirect_url, data=json.dumps(payload))
+                    requests.post(GOOGLE_SHEET_WEBAPP_URL, data=form_payload, timeout=10)
                 except Exception as e:
                     pass
 
@@ -234,3 +227,11 @@ else:
     st.write("1. Open your preferred local banking app (DBS digibank, OCBC Digital, UOB TMRW, etc.)")
     st.write("2. Choose PayNow to Mobile Number and transfer directly to the recipient details below:")
     
+    st.info(f"📱 Mobile Number: +65 {PAYNOW_NUMBER} \n\n💰 Exact Amount: ${st.session_state.grand_total:.2f}")
+    
+    st.write("3. Send your transaction payment screenshot to the host immediately via your handle:")
+    st.code(st.session_state.customer_contact)
+    
+    st.markdown("---")
+    st.subheader("🚨 Collection & Pickup Window")
+    st.write(f"⏰ Scheduled Time Window: Today between {st.session_state.customer_slot}")
