@@ -15,7 +15,7 @@ PAYNOW_NUMBER = "9640 7262"
 MAX_QTY = 3
 
 # 🔗 Your verified Google Apps Script URL
-GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycby8F_Xs_EteiSLW9HHqJF7GkZs4VbS7XywVxsnx2PBoaunEXZ7OnYTzsn4lWoPzjo8s6Q/exec"
+GOOGLE_SHEET_WEBAPP_URL = "https://google.com"
 
 DRINK_PRICES = {
     "Latte / White": {"Hot": 5.00, "Iced": 5.50},
@@ -178,7 +178,7 @@ if not st.session_state.ordered:
             
             milk_tag = " (Oat Milk)" if oat_milk and ("Latte" in name_str or "Mocha" in name_str) else ""
             items_list.append(f"{details['qty']}x {name_str}{milk_tag}")
-            st.write(f"- {details['qty']}x {name_str}: **\Total: \${item_cost:.2f}**")
+            st.write(f"- {details['qty']}x {name_str}: **\${item_cost:.2f}**")
             
             if oat_milk and ("Latte" in name_str or "Mocha" in name_str):
                 oat_milk_total += (details["qty"] * 1.00)
@@ -211,7 +211,7 @@ if not st.session_state.ordered:
                     )
                     urllib.request.urlopen(req)
                 except Exception as e:
-                    pass # Fails silently to protect user experience if network bottlenecks
+                    pass
 
                 st.session_state.customer_name = name
                 st.session_state.customer_contact = contact
@@ -240,3 +240,5 @@ else:
     st.info(f"📱 **Mobile Number:** `+65 {PAYNOW_NUMBER}`\n\n💰 **Exact Amount:** `${st.session_state.grand_total:.2f}`")
     
     st.markdown("""
+    3. **Send your payment screenshot** to the host immediately via your provided contact handles:
+    """)
