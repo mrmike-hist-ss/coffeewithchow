@@ -14,7 +14,7 @@ if 'ordered' not in st.session_state:
 PAYNOW_NUMBER = "9640 7262"
 MAX_QTY = 3
 
-# 🔗 Your verified Google Apps Script URL
+# Your verified Google Apps Script URL
 GOOGLE_SHEET_WEBAPP_URL = "https://google.com"
 
 DRINK_PRICES = {
@@ -224,21 +224,16 @@ else:
     st.balloons()
     st.success("🎉 Pre-order Submitted Successfully!")
     
-    st.markdown(f"""
-    ### Next Steps for **{st.session_state.customer_name}**:
+    st.subheader(f"Next Steps for {st.session_state.customer_name}:")
+    st.write("1. Open your preferred local banking app (DBS digibank, OCBC Digital, UOB TMRW, etc.)")
+    st.write("2. Choose PayNow to Mobile Number and transfer directly to the recipient details below:")
     
-    1. **Open your preferred banking app** (DBS digibank, OCBC Digital, UOB TMRW, etc.)
-    2. Choose **PayNow to Mobile Number** and enter:
-    """)
+    # Render the target values cleanly
+    st.info(f"📱 Mobile Number: +65 {PAYNOW_NUMBER} \n\n💰 Exact Amount: ${st.session_state.grand_total:.2f}")
     
-    st.info(f"📱 **Mobile Number:** `+65 {PAYNOW_NUMBER}`\n\n💰 **Exact Amount:** `${st.session_state.grand_total:.2f}`")
+    st.write("3. Send your transaction payment screenshot to the host immediately via your handle:")
+    st.code(st.session_state.customer_contact)
     
-    st.markdown("""
-    3. **Send your payment screenshot** to the host immediately via your provided contact handles:
-    """)
-    st.code(f"{st.session_state.customer_contact}")
-    
-    st.markdown(f"""
-    ---
-    ### 🚨 Collection Details:
-    * **Scheduled Window:** Today between **{st.session_state.customer_slot}**
+    st.markdown("---")
+    st.subheader("🚨 Collection & Pickup Window")
+    st.write(f"⏰ Scheduled Time Window: Today between {st.session_state.customer_slot}")
