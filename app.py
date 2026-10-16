@@ -30,8 +30,9 @@ def get_time_slots():
 
 TIME_SLOTS = get_time_slots()
 
-# --- CSS STYLES FOR THE LAYERED COFFEE CUPS ---
-st.markdown("""
+# --- EXTERNAL STYLING SYSTEM ---
+# Separating the CSS string from the indentation prevents syntax errors
+CSS_STYLE = """
 <style>
     .coffee-card {
         background-color: #fcfcfc;
@@ -76,7 +77,6 @@ st.markdown("""
     .layer.chocolate { background-color: #1a0f07; height: 25%; }
     .layer.water { background-color: #bce3eb; color: #1a3a40; height: 70%; }
     
-    /* Dynamic heights adjustments based on recipe */
     .cup.latte .espresso { height: 30%; }
     .cup.latte .milk { height: 55%; }
     .cup.latte .foam { height: 15%; }
@@ -89,7 +89,8 @@ st.markdown("""
     .cup.longblack .water { height: 70%; }
     .cup.longblack .espresso { height: 30%; }
 </style>
-""", unsafe_allowed_with_html=True)
+"""
+st.markdown(CSS_STYLE, unsafe_allowed_with_html=True)
 
 # --- STOREFRONT INTERFACE ---
 st.title("🏡 Room 102 Coffee")
@@ -102,7 +103,7 @@ if not st.session_state.ordered:
 
     # --- DRINK 1: LATTE / WHITE ---
     st.markdown('<div class="coffee-card">', unsafe_allowed_with_html=True)
-    col1, col2, col3 = st.columns([1, 2, 2])
+    col1, col2, col3 = st.columns()
     with col1:
         st.markdown('<div class="cup-container"><div class="cup latte"><div class="layer espresso">Espresso</div><div class="layer milk">Milk</div><div class="layer foam">Foam</div></div></div>', unsafe_allowed_with_html=True)
     with col2:
@@ -118,7 +119,7 @@ if not st.session_state.ordered:
 
     # --- DRINK 2: MOCHA ---
     st.markdown('<div class="coffee-card">', unsafe_allowed_with_html=True)
-    col1, col2, col3 = st.columns([1, 2, 2])
+    col1, col2, col3 = st.columns()
     with col1:
         st.markdown('<div class="cup-container"><div class="cup mocha"><div class="layer chocolate">Choc</div><div class="layer espresso">Espresso</div><div class="layer milk">Milk</div><div class="layer foam">Foam</div></div></div>', unsafe_allowed_with_html=True)
     with col2:
@@ -134,7 +135,7 @@ if not st.session_state.ordered:
 
     # --- DRINK 3: LONG BLACK ---
     st.markdown('<div class="coffee-card">', unsafe_allowed_with_html=True)
-    col1, col2, col3 = st.columns([1, 2, 2])
+    col1, col2, col3 = st.columns()
     with col1:
         st.markdown('<div class="cup-container"><div class="cup longblack"><div class="layer water">Water</div><div class="layer espresso">Espresso</div></div></div>', unsafe_allowed_with_html=True)
     with col2:
@@ -148,12 +149,11 @@ if not st.session_state.ordered:
             cart[f"{lb_temp} Long Black"] = {"qty": lb_qty, "unit_price": DRINK_PRICES['Long Black'][lb_temp]}
     st.markdown('</div>', unsafe_allowed_with_html=True)
 
-
     # --- LOGISTICS & UPCHARGES ---
     st.markdown("---")
     st.subheader("🕒 Collection Preferences")
     
-    # Oat Milk Customization (Positioned directly before the time slot dropdown)
+    # Oat Milk Customization (Escaped dollar sign)
     oat_milk = st.checkbox("🌾 Add \$1 for oat milk (Applies to all milk drinks in cart)")
     
     # Time slot collection dropdown
@@ -175,7 +175,6 @@ if not st.session_state.ordered:
             subtotal += item_cost
             st.write(f"- {details['qty']}x {name_str}: **\${item_cost:.2f}**")
             
-            # Apply oat milk upcharge only to milk-based beverages
             if oat_milk and ("Latte" in name_str or "Mocha" in name_str):
                 oat_milk_total += (details["qty"] * 1.00)
         
