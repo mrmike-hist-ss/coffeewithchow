@@ -31,7 +31,6 @@ def get_time_slots():
 TIME_SLOTS = get_time_slots()
 
 # --- EXTERNAL STYLING SYSTEM ---
-# Separating the CSS string from the indentation prevents syntax errors
 CSS_STYLE = """
 <style>
     .coffee-card {
@@ -90,7 +89,7 @@ CSS_STYLE = """
     .cup.longblack .espresso { height: 30%; }
 </style>
 """
-st.markdown(CSS_STYLE, unsafe_allowed_with_html=True)
+st.markdown(CSS_STYLE, unsafe_allow_html=True)
 
 # --- STOREFRONT INTERFACE ---
 st.title("🏡 Room 102 Coffee")
@@ -102,52 +101,52 @@ if not st.session_state.ordered:
     cart = {}
 
     # --- DRINK 1: LATTE / WHITE ---
-    st.markdown('<div class="coffee-card">', unsafe_allowed_with_html=True)
+    st.markdown('<div class="coffee-card">', unsafe_allow_html=True)
     col1, col2, col3 = st.columns()
     with col1:
-        st.markdown('<div class="cup-container"><div class="cup latte"><div class="layer espresso">Espresso</div><div class="layer milk">Milk</div><div class="layer foam">Foam</div></div></div>', unsafe_allowed_with_html=True)
+        st.markdown('<div class="cup-container"><div class="cup latte"><div class="layer espresso">Espresso</div><div class="layer milk">Milk</div><div class="layer foam">Foam</div></div></div>', unsafe_allow_html=True)
     with col2:
         st.markdown("#### 1. Latte / White")
         st.caption("Rich espresso base with velvety smooth steamed milk.")
         latte_temp = st.selectbox("Temperature", ["Iced", "Hot"], key="latte_temp")
     with col3:
-        st.markdown(f"<p style='text-align:right; font-weight:bold;'>\${DRINK_PRICES['Latte / White'][latte_temp]:.2f}</p>", unsafe_allowed_with_html=True)
+        st.markdown(f"<p style='text-align:right; font-weight:bold;'>\${DRINK_PRICES['Latte / White'][latte_temp]:.2f}</p>", unsafe_allow_html=True)
         latte_qty = st.selectbox("Quantity", list(range(MAX_QTY + 1)), key="latte_qty")
         if latte_qty > 0:
             cart[f"{latte_temp} Latte / White"] = {"qty": latte_qty, "unit_price": DRINK_PRICES['Latte / White'][latte_temp]}
-    st.markdown('</div>', unsafe_allowed_with_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # --- DRINK 2: MOCHA ---
-    st.markdown('<div class="coffee-card">', unsafe_allowed_with_html=True)
+    st.markdown('<div class="coffee-card">', unsafe_allow_html=True)
     col1, col2, col3 = st.columns()
     with col1:
-        st.markdown('<div class="cup-container"><div class="cup mocha"><div class="layer chocolate">Choc</div><div class="layer espresso">Espresso</div><div class="layer milk">Milk</div><div class="layer foam">Foam</div></div></div>', unsafe_allowed_with_html=True)
+        st.markdown('<div class="cup-container"><div class="cup mocha"><div class="layer chocolate">Choc</div><div class="layer espresso">Espresso</div><div class="layer milk">Milk</div><div class="layer foam">Foam</div></div></div>', unsafe_allow_html=True)
     with col2:
         st.markdown("#### 2. Mocha")
         st.caption("Espresso blended with dark chocolate and creamy milk.")
         mocha_temp = st.selectbox("Temperature", ["Iced", "Hot"], key="mocha_temp")
     with col3:
-        st.markdown(f"<p style='text-align:right; font-weight:bold;'>\${DRINK_PRICES['Mocha'][mocha_temp]:.2f}</p>", unsafe_allowed_with_html=True)
+        st.markdown(f"<p style='text-align:right; font-weight:bold;'>\${DRINK_PRICES['Mocha'][mocha_temp]:.2f}</p>", unsafe_allow_html=True)
         mocha_qty = st.selectbox("Quantity", list(range(MAX_QTY + 1)), key="mocha_qty")
         if mocha_qty > 0:
             cart[f"{mocha_temp} Mocha"] = {"qty": mocha_qty, "unit_price": DRINK_PRICES['Mocha'][mocha_temp]}
-    st.markdown('</div>', unsafe_allowed_with_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # --- DRINK 3: LONG BLACK ---
-    st.markdown('<div class="coffee-card">', unsafe_allowed_with_html=True)
+    st.markdown('<div class="coffee-card">', unsafe_allow_html=True)
     col1, col2, col3 = st.columns()
     with col1:
-        st.markdown('<div class="cup-container"><div class="cup longblack"><div class="layer water">Water</div><div class="layer espresso">Espresso</div></div></div>', unsafe_allowed_with_html=True)
+        st.markdown('<div class="cup-container"><div class="cup longblack"><div class="layer water">Water</div><div class="layer espresso">Espresso</div></div></div>', unsafe_allow_html=True)
     with col2:
         st.markdown("#### 3. Long Black")
         st.caption("Double shot of pristine espresso pulled over fresh water.")
         lb_temp = st.selectbox("Temperature", ["Iced", "Hot"], key="lb_temp")
     with col3:
-        st.markdown(f"<p style='text-align:right; font-weight:bold;'>\${DRINK_PRICES['Long Black'][lb_temp]:.2f}</p>", unsafe_allowed_with_html=True)
+        st.markdown(f"<p style='text-align:right; font-weight:bold;'>\${DRINK_PRICES['Long Black'][lb_temp]:.2f}</p>", unsafe_allow_html=True)
         lb_qty = st.selectbox("Quantity", list(range(MAX_QTY + 1)), key="lb_qty")
         if lb_qty > 0:
             cart[f"{lb_temp} Long Black"] = {"qty": lb_qty, "unit_price": DRINK_PRICES['Long Black'][lb_temp]}
-    st.markdown('</div>', unsafe_allowed_with_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # --- LOGISTICS & UPCHARGES ---
     st.markdown("---")
