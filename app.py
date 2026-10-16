@@ -13,8 +13,8 @@ if 'ordered' not in st.session_state:
 PAYNOW_NUMBER = "9640 7262"
 MAX_QTY = 3
 
-# 🔗 Your verified Google Apps Script URL
-GOOGLE_SHEET_WEBAPP_URL = "https://google.com"
+# 🔗 Your new verified Google Apps Script URL
+GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz2RL3qm9UETVY_37SqKQH-xhDUct3o0JpMSF50gqd8NoDYG2S-OiAN5MPdWi_2HJy8tQ/exec"
 
 DRINK_PRICES = {
     "Latte / White": {"Hot": 5.00, "Iced": 5.50},
@@ -211,9 +211,9 @@ if not st.session_state.ordered:
                     "total": f"${grand_total:.2f}"
                 }
                 
-                # 🚀 EXPLICIT REDIRECT AUTHORIZATION: Forces Python to pass variables down through Google's inner architecture
+                # Execute transmission directly
                 try:
-                    requests.post(GOOGLE_SHEET_WEBAPP_URL, params=query_params, allow_redirects=True, timeout=10)
+                    requests.get(GOOGLE_SHEET_WEBAPP_URL, params=query_params, timeout=10)
                 except Exception as e:
                     pass
 
@@ -246,3 +246,5 @@ else:
     st.markdown("---")
     st.subheader("🚨 Pickup & Collection Window")
     st.markdown(f"⏰ **Your Scheduled Time:** Today between **{st.session_state.customer_slot}**")
+    st.caption("📍 **Address Privacy:** Once your transaction screenshot is verified via chat, your host will instantly send you the exact floor and unit number.")
+    
