@@ -1,6 +1,6 @@
 import streamlit as st
 from datetime import datetime, timedelta
-import urllib.request
+import requests
 import json
 
 # --- PAGE CONFIGURATION ---
@@ -201,15 +201,9 @@ if not st.session_state.ordered:
                     "total": f"${grand_total:.2f}"
                 }
                 
-                # Post data to your Google Apps Script link
+                # Securely post data handling Google redirects automatically
                 try:
-                    req = urllib.request.Request(
-                        GOOGLE_SHEET_WEBAPP_URL,
-                        data=json.dumps(payload).encode('utf-8'),
-                        headers={'Content-Type': 'application/json'},
-                        method='POST'
-                    )
-                    urllib.request.urlopen(req)
+                    requests.post(GOOGLE_SHEET_WEBAPP_URL, json=payload, timeout=10)
                 except Exception as e:
                     pass
 
@@ -242,3 +236,9 @@ else:
     st.markdown("""
     3. **Send your payment screenshot** to the host immediately via your provided contact handles:
     """)
+    st.code(f"{st.session_state.customer_contact}")
+    
+    st.markdown(f"""
+    ---
+    ### 🚨 Collection Details:
+    * **Scheduled Window:** Today between **{st.session_state.customer_slot}**
