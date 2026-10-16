@@ -13,8 +13,8 @@ if 'ordered' not in st.session_state:
 PAYNOW_NUMBER = "9640 7262"
 MAX_QTY = 3
 
-# 🔗 Your new verified Google Apps Script URL
-GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzFMqeTolsZBu82SCSVVjZdwr0-xzSwejKu-1lDKx_4jNBhu8UtAXqmQOCfRDU-tcl8tQ/exec"
+# 🔗 Your verified Google Apps Script URL
+GOOGLE_SHEET_WEBAPP_URL = "https://google.com"
 
 DRINK_PRICES = {
     "Latte / White": {"Hot": 5.00, "Iced": 5.50},
@@ -34,28 +34,37 @@ def get_time_slots():
 
 TIME_SLOTS = get_time_slots()
 
-# --- EXTERNAL STYLING SYSTEM ---
+# --- MOBILE-FIRST CSS RE-STYLING ---
 CSS_STYLE = """
 <style>
-    .coffee-card {
-        background-color: #fcfcfc;
-        border: 1px solid #eaeaea;
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    /* Global adjustments for mobile viewport */
+    .stApp {
+        padding: 8px !important;
     }
+    
+    /* Responsive card layout */
+    .coffee-card {
+        background-color: #fafafa;
+        border: 1px solid #e0e0e0;
+        border-radius: 16px;
+        padding: 16px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    
+    /* Centered mobile-optimized coffee cup diagram */
     .cup-container {
         display: flex;
         justify-content: center;
-        margin-bottom: 12px;
+        align-items: center;
+        margin: 8px 0 16px 0;
     }
     .cup {
-        width: 70px;
-        height: 75px;
+        width: 68px;
+        height: 72px;
         border: 4px solid #4a3424;
-        border-bottom-left-radius: 24px;
-        border-bottom-right-radius: 24px;
+        border-bottom-left-radius: 22px;
+        border-bottom-right-radius: 22px;
         position: relative;
         overflow: hidden;
         background-color: transparent;
@@ -67,7 +76,7 @@ CSS_STYLE = """
         text-align: center;
         color: white;
         font-size: 9px;
-        font-weight: bold;
+        font-weight: 700;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -91,6 +100,16 @@ CSS_STYLE = """
     
     .cup.longblack .water { height: 70%; }
     .cup.longblack .espresso { height: 30%; }
+    
+    /* Clean up headers for tighter mobile feel */
+    h1 { font-size: 26px !important; font-weight: 800 !important; }
+    h2 { font-size: 20px !important; font-weight: 700 !important; }
+    h3 { font-size: 18px !important; font-weight: 700 !important; }
+    
+    /* Target form-spacing bugs on small web viewports */
+    div[data-testid="stBlock"] {
+        padding: 0px !important;
+    }
 </style>
 """
 st.markdown(CSS_STYLE, unsafe_allow_html=True)
@@ -106,15 +125,14 @@ if not st.session_state.ordered:
 
     # --- DRINK 1: LATTE / WHITE ---
     st.markdown('<div class="coffee-card">', unsafe_allow_html=True)
-    col1, col2, col3 = st.columns(3)
-    with col1:
+    # Using specific column width weighting ratio [1, 2] optimized for smart screens
+    c1, c2 = st.columns([1, 2])
+    with c1:
         st.markdown('<div class="cup-container"><div class="cup latte"><div class="layer espresso">Espresso</div><div class="layer milk">Milk</div><div class="layer foam">Foam</div></div></div>', unsafe_allow_html=True)
-    with col2:
+    with c2:
         st.markdown("#### 1. Latte / White")
-        st.caption("Rich espresso base with velvety smooth milk.")
-        latte_temp = st.selectbox("Temperature", ["Iced", "Hot"], key="latte_temp")
-    with col3:
-        st.markdown(f"<p style='text-align:right; font-weight:bold;'>\${DRINK_PRICES['Latte / White'][latte_temp]:.2f}</p>", unsafe_allow_html=True)
+        latte_temp = st.selectbox("Type", ["Iced", "Hot"], key="latte_temp", label_visibility="collapsed")
+        st.markdown(f"Price: **\${DRINK_PRICES['Latte / White'][latte_temp]:.2f}**")
         latte_qty = st.selectbox("Quantity", list(range(MAX_QTY + 1)), key="latte_qty")
         if latte_qty > 0:
             cart[f"{latte_temp} Latte / White"] = {"qty": latte_qty, "unit_price": DRINK_PRICES['Latte / White'][latte_temp]}
@@ -122,15 +140,13 @@ if not st.session_state.ordered:
 
     # --- DRINK 2: MOCHA ---
     st.markdown('<div class="coffee-card">', unsafe_allow_html=True)
-    col1, col2, col3 = st.columns(3)
-    with col1:
+    c1, c2 = st.columns([1, 2])
+    with c1:
         st.markdown('<div class="cup-container"><div class="cup mocha"><div class="layer chocolate">Choc</div><div class="layer espresso">Espresso</div><div class="layer milk">Milk</div><div class="layer foam">Foam</div></div></div>', unsafe_allow_html=True)
-    with col2:
+    with c2:
         st.markdown("#### 2. Mocha")
-        st.caption("Espresso blended with rich chocolate and milk.")
-        mocha_temp = st.selectbox("Temperature", ["Iced", "Hot"], key="mocha_temp")
-    with col3:
-        st.markdown(f"<p style='text-align:right; font-weight:bold;'>\${DRINK_PRICES['Mocha'][mocha_temp]:.2f}</p>", unsafe_allow_html=True)
+        mocha_temp = st.selectbox("Type", ["Iced", "Hot"], key="mocha_temp", label_visibility="collapsed")
+        st.markdown(f"Price: **\${DRINK_PRICES['Mocha'][mocha_temp]:.2f}**")
         mocha_qty = st.selectbox("Quantity", list(range(MAX_QTY + 1)), key="mocha_qty")
         if mocha_qty > 0:
             cart[f"{mocha_temp} Mocha"] = {"qty": mocha_qty, "unit_price": DRINK_PRICES['Mocha'][mocha_temp]}
@@ -138,15 +154,13 @@ if not st.session_state.ordered:
 
     # --- DRINK 3: LONG BLACK ---
     st.markdown('<div class="coffee-card">', unsafe_allow_html=True)
-    col1, col2, col3 = st.columns(3)
-    with col1:
+    c1, c2 = st.columns([1, 2])
+    with c1:
         st.markdown('<div class="cup-container"><div class="cup longblack"><div class="layer water">Water</div><div class="layer espresso">Espresso</div></div></div>', unsafe_allow_html=True)
-    with col2:
+    with c2:
         st.markdown("#### 3. Long Black")
-        st.caption("Double shot of pristine espresso pulled over fresh water.")
-        lb_temp = st.selectbox("Temperature", ["Iced", "Hot"], key="lb_temp")
-    with col3:
-        st.markdown(f"<p style='text-align:right; font-weight:bold;'>\${DRINK_PRICES['Long Black'][lb_temp]:.2f}</p>", unsafe_allow_html=True)
+        lb_temp = st.selectbox("Type", ["Iced", "Hot"], key="lb_temp", label_visibility="collapsed")
+        st.markdown(f"Price: **\${DRINK_PRICES['Long Black'][lb_temp]:.2f}**")
         lb_qty = st.selectbox("Quantity", list(range(MAX_QTY + 1)), key="lb_qty")
         if lb_qty > 0:
             cart[f"{lb_temp} Long Black"] = {"qty": lb_qty, "unit_price": DRINK_PRICES['Long Black'][lb_temp]}
@@ -156,12 +170,12 @@ if not st.session_state.ordered:
     st.markdown("---")
     st.subheader("🕒 Collection Preferences")
     
-    oat_milk = st.checkbox("🌾 Add \$1 for oat milk (Applies to all milk drinks in cart)")
+    oat_milk = st.checkbox("🌾 Add \$1 for oat milk (Applies to all milk drinks)")
     selected_slot = st.selectbox("Select 15-Minute Pickup Window", TIME_SLOTS)
 
     st.subheader("👤 Contact Details")
     name = st.text_input("Your Name", placeholder="e.g. Rachel")
-    contact = st.text_input("WhatsApp Number or Telegram Handle", placeholder="e.g. 9123 4567 / @rachel")
+    contact = st.text_input("WhatsApp Number / Telegram", placeholder="e.g. 9123 4567")
 
     # --- LIVE BREAKDOWN & VALIDATION ---
     if cart:
@@ -188,10 +202,10 @@ if not st.session_state.ordered:
         grand_total = subtotal + oat_milk_total
         st.markdown(f"### **Total Amount Due: \${grand_total:.2f}**")
         
-        # Check if text inputs are filled before enabling submit
+        # Form inputs validation check
         if name and contact:
-            if st.button("Confirm Order & View PayNow Details", type="primary"):
-                # URL form payload to sync cleanly with standard Google doPost variables
+            if st.button("Confirm Order & View PayNow Details", type="primary", use_container_width=True):
+                # Construct data package
                 form_payload = {
                     "name": name,
                     "contact": contact,
@@ -200,7 +214,7 @@ if not st.session_state.ordered:
                     "total": f"${grand_total:.2f}"
                 }
                 
-                # Submit data as regular form-encoded query parameters
+                # Form POST to webapp URL handles redirects seamlessly
                 try:
                     requests.post(GOOGLE_SHEET_WEBAPP_URL, data=form_payload, timeout=10)
                 except Exception as e:
@@ -219,19 +233,17 @@ if not st.session_state.ordered:
         st.warning("Please select a quantity for at least 1 coffee to start your order.")
 
 else:
-    # --- FEE-FREE PAYNOW SCREEN ---
+    # --- FEE-FREE MOBILE PAYNOW SCREEN ---
     st.balloons()
     st.success("🎉 Pre-order Submitted Successfully!")
     
     st.subheader(f"Next Steps for {st.session_state.customer_name}:")
-    st.write("1. Open your preferred local banking app (DBS digibank, OCBC Digital, UOB TMRW, etc.)")
-    st.write("2. Choose PayNow to Mobile Number and transfer directly to the recipient details below:")
+    st.write("1. Open your banking app (DBS, OCBC, UOB, etc.)")
+    st.write("2. Select PayNow to Mobile and enter details below:")
     
-    st.info(f"📱 Mobile Number: +65 {PAYNOW_NUMBER} \n\n💰 Exact Amount: ${st.session_state.grand_total:.2f}")
+    st.info(f"📱 **Mobile Number:** `+65 {PAYNOW_NUMBER}`\n\n💰 **Exact Amount:** `${st.session_state.grand_total:.2f}`")
     
-    st.write("3. Send your transaction payment screenshot to the host immediately via your handle:")
+    st.write("3. **Send your payment screenshot** to the host immediately via your handle:")
     st.code(st.session_state.customer_contact)
     
     st.markdown("---")
-    st.subheader("🚨 Collection & Pickup Window")
-    st.write(f"⏰ Scheduled Time Window: Today between {st.session_state.customer_slot}")
