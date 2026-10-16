@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import requests
 
 # --- PAGE CONFIGURATION ---
-st.set_page_config(page_title="Coffee With Chow", page_icon="☕", layout="centered")
+st.set_page_config(page_title="Coffee with Chow", page_icon="☕", layout="centered")
 
 # --- INITIALIZE STATE ---
 if 'ordered' not in st.session_state:
@@ -34,15 +34,12 @@ def get_time_slots():
 
 TIME_SLOTS = get_time_slots()
 
-# --- MOBILE-FIRST CSS RE-STYLING ---
+# --- MOBILE-FIRST CSS STYLING ---
 CSS_STYLE = """
 <style>
-    /* Global adjustments for mobile viewport */
     .stApp {
         padding: 8px !important;
     }
-    
-    /* Responsive card layout */
     .coffee-card {
         background-color: #fafafa;
         border: 1px solid #e0e0e0;
@@ -51,8 +48,6 @@ CSS_STYLE = """
         margin-bottom: 16px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
-    
-    /* Centered mobile-optimized coffee cup diagram */
     .cup-container {
         display: flex;
         justify-content: center;
@@ -101,12 +96,10 @@ CSS_STYLE = """
     .cup.longblack .water { height: 70%; }
     .cup.longblack .espresso { height: 30%; }
     
-    /* Clean up headers for tighter mobile feel */
     h1 { font-size: 26px !important; font-weight: 800 !important; }
     h2 { font-size: 20px !important; font-weight: 700 !important; }
     h3 { font-size: 18px !important; font-weight: 700 !important; }
     
-    /* Target form-spacing bugs on small web viewports */
     div[data-testid="stBlock"] {
         padding: 0px !important;
     }
@@ -125,52 +118,67 @@ if not st.session_state.ordered:
 
     # --- DRINK 1: LATTE / WHITE ---
     st.markdown('<div class="coffee-card">', unsafe_allow_html=True)
-    # Using specific column width weighting ratio [1, 2] optimized for smart screens
-    c1, c2 = st.columns([1, 2])
+    c1, c2 = st.columns(2)
     with c1:
         st.markdown('<div class="cup-container"><div class="cup latte"><div class="layer espresso">Espresso</div><div class="layer milk">Milk</div><div class="layer foam">Foam</div></div></div>', unsafe_allow_html=True)
     with c2:
         st.markdown("#### 1. Latte / White")
         latte_temp = st.selectbox("Type", ["Iced", "Hot"], key="latte_temp", label_visibility="collapsed")
-        st.markdown(f"Price: **\${DRINK_PRICES['Latte / White'][latte_temp]:.2f}**")
+        latte_oat = st.checkbox("🌾 Use Oat Milk (+\$1.00)", key="latte_oat")
+        
+        base_p = DRINK_PRICES['Latte / White'][latte_temp]
+        unit_p = base_p + 1.00 if latte_oat else base_p
+        st.markdown(f"Price: **\${unit_p:.2f}**")
+        
         latte_qty = st.selectbox("Quantity", list(range(MAX_QTY + 1)), key="latte_qty")
         if latte_qty > 0:
-            cart[f"{latte_temp} Latte / White"] = {"qty": latte_qty, "unit_price": DRINK_PRICES['Latte / White'][latte_temp]}
+            milk_label = " (Oat Milk)" if latte_oat else ""
+            cart[f"{latte_temp} Latte / White{milk_label}"] = {"qty": latte_qty, "unit_price": unit_p}
     st.markdown('</div>', unsafe_allow_html=True)
 
     # --- DRINK 2: MOCHA ---
     st.markdown('<div class="coffee-card">', unsafe_allow_html=True)
-    c1, c2 = st.columns([1, 2])
+    c1, c2 = st.columns(2)
     with c1:
         st.markdown('<div class="cup-container"><div class="cup mocha"><div class="layer chocolate">Choc</div><div class="layer espresso">Espresso</div><div class="layer milk">Milk</div><div class="layer foam">Foam</div></div></div>', unsafe_allow_html=True)
     with c2:
         st.markdown("#### 2. Mocha")
         mocha_temp = st.selectbox("Type", ["Iced", "Hot"], key="mocha_temp", label_visibility="collapsed")
-        st.markdown(f"Price: **\${DRINK_PRICES['Mocha'][mocha_temp]:.2f}**")
+        mocha_oat = st.checkbox("🌾 Use Oat Milk (+\$1.00)", key="mocha_oat")
+        
+        base_p = DRINK_PRICES['Mocha'][mocha_temp]
+        unit_p = base_p + 1.00 if mocha_oat else base_p
+        st.markdown(f"Price: **\${unit_p:.2f}**")
+        
         mocha_qty = st.selectbox("Quantity", list(range(MAX_QTY + 1)), key="mocha_qty")
         if mocha_qty > 0:
-            cart[f"{mocha_temp} Mocha"] = {"qty": mocha_qty, "unit_price": DRINK_PRICES['Mocha'][mocha_temp]}
+            milk_label = " (Oat Milk)" if mocha_oat else ""
+            cart[f"{mocha_temp} Mocha{milk_label}"] = {"qty": mocha_qty, "unit_price": unit_p}
     st.markdown('</div>', unsafe_allow_html=True)
 
     # --- DRINK 3: LONG BLACK ---
     st.markdown('<div class="coffee-card">', unsafe_allow_html=True)
-    c1, c2 = st.columns([1, 2])
+    c1, c2 = st.columns(2)
     with c1:
         st.markdown('<div class="cup-container"><div class="cup longblack"><div class="layer water">Water</div><div class="layer espresso">Espresso</div></div></div>', unsafe_allow_html=True)
     with c2:
         st.markdown("#### 3. Long Black")
         lb_temp = st.selectbox("Type", ["Iced", "Hot"], key="lb_temp", label_visibility="collapsed")
-        st.markdown(f"Price: **\${DRINK_PRICES['Long Black'][lb_temp]:.2f}**")
+        lb_oat = st.checkbox("🌾 Add Oat Milk (+\$1.00)", key="lb_oat")
+        
+        base_p = DRINK_PRICES['Long Black'][lb_temp]
+        unit_p = base_p + 1.00 if lb_oat else base_p
+        st.markdown(f"Price: **\${unit_p:.2f}**")
+        
         lb_qty = st.selectbox("Quantity", list(range(MAX_QTY + 1)), key="lb_qty")
         if lb_qty > 0:
-            cart[f"{lb_temp} Long Black"] = {"qty": lb_qty, "unit_price": DRINK_PRICES['Long Black'][lb_temp]}
+            milk_label = " (Oat Milk)" if lb_oat else ""
+            cart[f"{lb_temp} Long Black{milk_label}"] = {"qty": lb_qty, "unit_price": unit_p}
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # --- LOGISTICS & UPCHARGES ---
+    # --- LOGISTICS ---
     st.markdown("---")
     st.subheader("🕒 Collection Preferences")
-    
-    oat_milk = st.checkbox("🌾 Add \$1 for oat milk (Applies to all milk drinks)")
     selected_slot = st.selectbox("Select 15-Minute Pickup Window", TIME_SLOTS)
 
     st.subheader("👤 Contact Details")
@@ -181,40 +189,27 @@ if not st.session_state.ordered:
     if cart:
         st.markdown("---")
         st.markdown("### 🛒 Order Review")
-        subtotal = 0
-        oat_milk_total = 0
+        grand_total = 0
         items_list = []
         
         for name_str, details in cart.items():
             item_cost = details["qty"] * details["unit_price"]
-            subtotal += item_cost
-            
-            milk_tag = " (Oat Milk)" if oat_milk and ("Latte" in name_str or "Mocha" in name_str) else ""
-            items_list.append(f"{details['qty']}x {name_str}{milk_tag}")
+            grand_total += item_cost
+            items_list.append(f"{details['qty']}x {name_str}")
             st.write(f"- {details['qty']}x {name_str}: **\${item_cost:.2f}**")
             
-            if oat_milk and ("Latte" in name_str or "Mocha" in name_str):
-                oat_milk_total += (details["qty"] * 1.00)
-        
-        if oat_milk_total > 0:
-            st.write(f"- 🌾 Oat Milk Substitution Upgrade: **\${oat_milk_total:.2f}**")
-            
-        grand_total = subtotal + oat_milk_total
         st.markdown(f"### **Total Amount Due: \${grand_total:.2f}**")
         
-        # Form inputs validation check
         if name and contact:
             if st.button("Confirm Order & View PayNow Details", type="primary", use_container_width=True):
-                # Construct data package
                 form_payload = {
                     "name": name,
                     "contact": contact,
                     "slot": selected_slot,
                     "items": ", ".join(items_list),
-                    "total": f"${grand_total:.2f}"
+                    "total": f"\${grand_total:.2f}"
                 }
                 
-                # Form POST to webapp URL handles redirects seamlessly
                 try:
                     requests.post(GOOGLE_SHEET_WEBAPP_URL, data=form_payload, timeout=10)
                 except Exception as e:
@@ -247,3 +242,10 @@ else:
     st.code(st.session_state.customer_contact)
     
     st.markdown("---")
+    st.subheader("🚨 Pickup & Collection Window")
+    st.markdown(f"⏰ **Your Scheduled Time:** Today between **{st.session_state.customer_slot}**")
+    st.caption("📍 **Address Privacy:** Once your transaction screenshot is verified via chat, your host will instantly send you the exact floor and unit number.")
+    
+    if st.button("Back to Menu", use_container_width=True):
+        st.session_state.ordered = False
+        st.rerun()
