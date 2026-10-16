@@ -124,7 +124,7 @@ if not st.session_state.ordered:
     with c2:
         st.markdown("#### 1. Latte / White")
         latte_temp = st.selectbox("Type", ["Iced", "Hot"], key="latte_temp", label_visibility="collapsed")
-        latte_oat = st.checkbox("🌾 Use Oat Milk (+\$1.00)", key="latte_oat")
+        latte_oat = st.checkbox("🌾 Use Oat Milk (+$1.00)", key="latte_oat")
         
         base_p = DRINK_PRICES['Latte / White'][latte_temp]
         unit_p = base_p + 1.00 if latte_oat else base_p
@@ -144,7 +144,7 @@ if not st.session_state.ordered:
     with c2:
         st.markdown("#### 2. Mocha")
         mocha_temp = st.selectbox("Type", ["Iced", "Hot"], key="mocha_temp", label_visibility="collapsed")
-        mocha_oat = st.checkbox("🌾 Use Oat Milk (+\$1.00)", key="mocha_oat")
+        mocha_oat = st.checkbox("🌾 Use Oat Milk (+$1.00)", key="mocha_oat")
         
         base_p = DRINK_PRICES['Mocha'][mocha_temp]
         unit_p = base_p + 1.00 if mocha_oat else base_p
@@ -164,7 +164,7 @@ if not st.session_state.ordered:
     with c2:
         st.markdown("#### 3. Long Black")
         lb_temp = st.selectbox("Type", ["Iced", "Hot"], key="lb_temp", label_visibility="collapsed")
-        lb_oat = st.checkbox("🌾 Add Oat Milk (+\$1.00)", key="lb_oat")
+        lb_oat = st.checkbox("🌾 Add Oat Milk (+$1.00)", key="lb_oat")
         
         base_p = DRINK_PRICES['Long Black'][lb_temp]
         unit_p = base_p + 1.00 if lb_oat else base_p
@@ -202,16 +202,18 @@ if not st.session_state.ordered:
         
         if name and contact:
             if st.button("Confirm Order & View PayNow Details", type="primary", use_container_width=True):
-                form_payload = {
+                # Construct query parameters
+                query_params = {
                     "name": name,
                     "contact": contact,
                     "slot": selected_slot,
                     "items": ", ".join(items_list),
-                    "total": f"\${grand_total:.2f}"
+                    "total": f"${grand_total:.2f}"
                 }
                 
+                # 🚀 EXPLICIT REDIRECT AUTHORIZATION: Forces Python to pass variables down through Google's inner architecture
                 try:
-                    requests.post(GOOGLE_SHEET_WEBAPP_URL, data=form_payload, timeout=10)
+                    requests.post(GOOGLE_SHEET_WEBAPP_URL, params=query_params, allow_redirects=True, timeout=10)
                 except Exception as e:
                     pass
 
@@ -244,8 +246,3 @@ else:
     st.markdown("---")
     st.subheader("🚨 Pickup & Collection Window")
     st.markdown(f"⏰ **Your Scheduled Time:** Today between **{st.session_state.customer_slot}**")
-    st.caption("📍 **Address Privacy:** Once your transaction screenshot is verified via chat, your host will instantly send you the exact floor and unit number.")
-    
-    if st.button("Back to Menu", use_container_width=True):
-        st.session_state.ordered = False
-        st.rerun()
