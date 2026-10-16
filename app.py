@@ -115,7 +115,7 @@ CSS_STYLE = """
 st.markdown(CSS_STYLE, unsafe_allow_html=True)
 
 # --- STOREFRONT INTERFACE ---
-st.title("🏡 Room 102 Coffee")
+st.title("🏡 Coffee with Chow")
 st.caption("📍 Punggol • Home Cafe Pickup")
 st.markdown("---")
 
