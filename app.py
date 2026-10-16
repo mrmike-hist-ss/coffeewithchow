@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import requests
 
 # --- PAGE CONFIGURATION ---
-st.set_page_config(page_title="Room 102 Coffee", page_icon="☕", layout="centered")
+st.set_page_config(page_title="Coffee With Chow", page_icon="☕", layout="centered")
 
 # --- INITIALIZE STATE ---
 if 'ordered' not in st.session_state:
@@ -116,7 +116,7 @@ st.markdown(CSS_STYLE, unsafe_allow_html=True)
 
 # --- STOREFRONT INTERFACE ---
 st.title("🏡 Room 102 Coffee")
-st.caption("📍 Ang Mo Kio • Home Cafe Pickup")
+st.caption("📍 Punggol • Home Cafe Pickup")
 st.markdown("---")
 
 if not st.session_state.ordered:
