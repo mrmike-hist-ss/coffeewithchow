@@ -269,6 +269,6 @@ st.subheader("🚨 Pickup & Collection Window")
 st.markdown(f"⏰ Your Scheduled Time: Today between {st.session_state.customer_slot}")
 st.caption("📍 Address Privacy: Once your transaction screenshot is verified via WhatsApp chat, your host will instantly send you the exact Punggol floor and unit number.")
 if st.button("Back to Menu", use_container_width=True):
-st.session_state.cart = []
-st.session_state.ordered = False
+    st.session_state.cart = []
+    st.session_state.ordered = False
 st.rerun()
