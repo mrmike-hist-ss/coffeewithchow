@@ -11,6 +11,14 @@ if 'cart' not in st.session_state:
     st.session_state.cart = []
 if 'ordered' not in st.session_state:
     st.session_state.ordered = False
+if 'grand_total' not in st.session_state:
+    st.session_state.grand_total = 0.00
+if 'customer_name' not in st.session_state:
+    st.session_state.customer_name = ""
+if 'customer_contact' not in st.session_state:
+    st.session_state.customer_contact = ""
+if 'customer_slot' not in st.session_state:
+    st.session_state.customer_slot = ""
 
 # CONFIGURATION AND BASE PRICES
 PAYNOW_NUMBER = "9640 7262"
@@ -102,8 +110,8 @@ CSS_STYLE = """
 st.markdown(CSS_STYLE, unsafe_allow_html=True)
 
 def validate_sg_phone(number):
-    # Removes all spaces and checks for exactly 8 digits starting with 8 or 9
     clean_num = re.sub(r'\s+', '', number)
+    # Validates exactly 8 digits starting with 8 or 9
     if re.match(r'^[89]\d{7}$', clean_num):
         return clean_num
     return None
@@ -115,7 +123,6 @@ st.markdown("---")
 
 if not st.session_state.ordered:
     st.subheader("📋 Menu Selection")
-    cart = {}
 
     # DRINK 1 LATTE WHITE
     st.markdown('<div class="coffee-card">', unsafe_allow_html=True)
@@ -206,21 +213,22 @@ if not st.session_state.ordered:
         st.markdown("---")
         st.subheader("🛒 Current Shopping Bag")
         
-        grand_total = 0
+        calculated_total = 0.0
         items_summary = {}
         
         for item in st.session_state.cart:
             name_str = item["item_name"]
             items_summary[name_str] = items_summary.get(name_str, 0) + 1
-            grand_total += item["price"]
+            calculated_total += float(item["price"])
             
         for item_title, qty in items_summary.items():
             st.write(f"- **{qty}x** {item_title}")
             
-        st.markdown(f"### **Total Amount: \${grand_total:.2f}**")
+        st.markdown(f"### **Total Amount: \${calculated_total:.2f}**")
         
         if st.button("❌ Clear Bag", use_container_width=True):
             st.session_state.cart = []
+            st.session_state.grand_total = 0.00
             st.rerun()
 
         st.markdown("---")
@@ -234,7 +242,7 @@ if not st.session_state.ordered:
                     "contact": valid_whatsapp,
                     "slot": selected_slot,
                     "items": ", ".join(compiled_items),
-                    "total": f"${grand_total:.2f}"
+                    "total": f"${calculated_total:.2f}"
                 }
                 
                 try:
@@ -245,21 +253,20 @@ if not st.session_state.ordered:
                 st.session_state.customer_name = name
                 st.session_state.customer_contact = valid_whatsapp
                 st.session_state.customer_slot = selected_slot
-                st.session_state.grand_total = grand_total
+                st.session_state.grand_total = calculated_total
                 st.session_state.ordered = True
                 st.rerun()
         else:
-            st.info("💡 Please complete your Name and valid 8-digit WhatsApp Number above to open checkout.")
-    else:
-        st.info("Your shopping bag is empty. Select your options above and click 'Add to Cart'!")
-
+Use code with caution.
+st.info("💡 Please complete your Name and valid 8-digit WhatsApp Number above to open checkout.")
 else:
-    # FEE-FREE MOBILE PAYNOW SCREEN
-    st.balloons()
-    st.success("🎉 Pre-order Submitted Successfully!")
-    
-    st.subheader(f"Next Steps for {st.session_state.customer_name}:")
-    st.write("1. Open your local banking app (DBS, OCBC, UOB, etc.)")
+st.info("Your shopping bag is empty. Select your options above and click 'Add to Cart'!")
+else:
+# FEE-FREE MOBILE PAYNOW SCREEN
+st.balloons()
+st.success("🎉 Pre-order Submitted Successfully!")
+st.subheader(f"Next Steps for {st.session_state.customer_name}:")
+st.write("1. Open your local banking app (DBS, OCBC, UOB, etc.)")
 st.write("2. Select PayNow to Mobile Number and enter the details below:")
 st.info(f"📱 Mobile Number: +65 {PAYNOW_NUMBER}\n\n💰 Exact Amount: ${st.session_state.grand_total:.2f}")
 st.write("3. Send your payment transfer screenshot to the host immediately via WhatsApp to your number:")
@@ -270,5 +277,8 @@ st.markdown(f"⏰ Your Scheduled Time: Today between {st.session_state.customer_
 st.caption("📍 Address Privacy: Once your transaction screenshot is verified via WhatsApp chat, your host will instantly send you the exact Punggol floor and unit number.")
 if st.button("Back to Menu", use_container_width=True):
     st.session_state.cart = []
+    st.session_state.grand_total = 0.00
     st.session_state.ordered = False
 st.rerun()
+
+
