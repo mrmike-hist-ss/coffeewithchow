@@ -260,7 +260,6 @@ else:
     
     st.subheader(f"Next Steps for {st.session_state.customer_name}:")
     st.write("1. Open your local banking app (DBS, OCBC, UOB, etc.)")
-Use code with caution.
 st.write("2. Select PayNow to Mobile Number and enter the details below:")
 st.info(f"📱 Mobile Number: +65 {PAYNOW_NUMBER}\n\n💰 Exact Amount: ${st.session_state.grand_total:.2f}")
 st.write("3. Send your payment transfer screenshot to the host immediately via WhatsApp to your number:")
