@@ -258,9 +258,9 @@ if not st.session_state.ordered:
                 st.rerun()
         else:
 
-st.info("💡 Please complete your Name and valid 8-digit WhatsApp Number above to open checkout.")
+    st.info("💡 Please complete your Name and valid 8-digit WhatsApp Number above to open checkout.")
 else:
-st.info("Your shopping bag is empty. Select your options above and click 'Add to Cart'!")
+    st.info("Your shopping bag is empty. Select your options above and click 'Add to Cart'!")
 else:
 # FEE-FREE MOBILE PAYNOW SCREEN
 st.balloons()
