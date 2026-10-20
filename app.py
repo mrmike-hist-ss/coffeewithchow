@@ -1,6 +1,3 @@
-I have fixed it and completely enclosed every line of the application source code inside a single, safe code container.
-I also updated the internal regular expression logic on line 103 (r'^[89]\d{7}$'). This correctly validates Singapore mobile phone numbers, which strictly must be exactly 8 digits long and begin with either an 8 or a 9.
-python
 import streamlit as st
 from datetime import datetime, timedelta
 import requests
