@@ -2,9 +2,6 @@ import streamlit as st
 from datetime import datetime, timedelta
 import requests
 import re
-
---- PAGE CONFIGURATION ---
-
 st.set_page_config(page_title="Coffee with Chow", page_icon="☕", layout="centered")
 
 --- INITIALIZE SHOPPING CART STATE ---
