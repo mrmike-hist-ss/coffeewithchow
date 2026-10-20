@@ -110,8 +110,8 @@ CSS_STYLE = """
 st.markdown(CSS_STYLE, unsafe_allow_html=True)
 
 def validate_sg_phone(number):
+    # Removes all spaces and checks for exactly 8 digits starting with 8 or 9
     clean_num = re.sub(r'\s+', '', number)
-    # Validates exactly 8 digits starting with 8 or 9
     if re.match(r'^[89]\d{7}$', clean_num):
         return clean_num
     return None
@@ -232,9 +232,12 @@ if not st.session_state.ordered:
             st.rerun()
 
         st.markdown("---")
-        if name and valid_whatsapp:
+        
+        # Flattened validation architecture to prevent indentation mismatch bugs
+        if not name or not valid_whatsapp:
+            st.info("💡 Please complete your Name and valid 8-digit WhatsApp Number above to open checkout.")
+        else:
             if st.button("Confirm Order & View PayNow Details", type="primary", use_container_width=True):
-                
                 compiled_items = [f"{qty}x {item}" for item, qty in items_summary.items()]
                 
                 query_params = {
@@ -252,15 +255,14 @@ if not st.session_state.ordered:
 
                 st.session_state.customer_name = name
                 st.session_state.customer_contact = valid_whatsapp
-                st.session_state.customer_slot = selected_slot
-                st.session_state.grand_total = calculated_total
-                st.session_state.ordered = True
-                st.rerun()
-        else:
-    st.info("💡 Please complete your Name and valid 8-digit WhatsApp Number above to open checkout.")
-    else:
-    st.info("Your shopping bag is empty. Select your options above and click 'Add to Cart'!")
-    else:
+
+st.session_state.customer_slot = selected_slot
+st.session_state.grand_total = calculated_total
+st.session_state.ordered = True
+st.rerun()
+else:
+st.info("Your shopping bag is empty. Select your options above and click 'Add to Cart'!")
+else:
 # FEE-FREE MOBILE PAYNOW SCREEN
 st.balloons()
 st.success("🎉 Pre-order Submitted Successfully!")
@@ -274,10 +276,3 @@ st.markdown("---")
 st.subheader("🚨 Pickup & Collection Window")
 st.markdown(f"⏰ Your Scheduled Time: Today between {st.session_state.customer_slot}")
 st.caption("📍 Address Privacy: Once your transaction screenshot is verified via WhatsApp chat, your host will instantly send you the exact Punggol floor and unit number.")
-if st.button("Back to Menu", use_container_width=True):
-    st.session_state.cart = []
-    st.session_state.grand_total = 0.00
-    st.session_state.ordered = False
-st.rerun()
-
-
