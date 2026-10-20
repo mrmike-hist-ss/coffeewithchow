@@ -103,6 +103,7 @@ st.markdown(CSS_STYLE, unsafe_allow_html=True)
 
 def validate_sg_phone(number):
     clean_num = re.sub(r'\s+', '', number)
+    # Checks for exactly 8 digits starting with 8 or 9
     if re.match(r'^[89]\d{7}$', clean_num):
         return clean_num
     return None
@@ -260,7 +261,7 @@ else:
     st.subheader(f"Next Steps for {st.session_state.customer_name}:")
     st.write("1. Open your local banking app (DBS, OCBC, UOB, etc.)")
     st.write("2. Select PayNow to Mobile Number and enter the details below:")
-    st.info(f"📱 Mobile Number: +65 {PAYNOW_NUMBER}\n\n💰 Exact Amount: ${st.session_state.grand_total:.2f}")
+st.info(f"📱 Mobile Number: +65 {PAYNOW_NUMBER}\n\n💰 Exact Amount: ${st.session_state.grand_total:.2f}")
 st.write("3. Send your payment transfer screenshot to the host immediately via WhatsApp to your number:")
 st.code(st.session_state.customer_contact)
 st.markdown("---")
